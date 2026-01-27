@@ -1,0 +1,5 @@
+system,name,city,beds
+BJC,BJH,St. Louis,1432
+BJC,MOBap,Creve Coeur,1107
+Mercy,Mercy STL,Creve Coeur,983
+SSM,SLUH,St. Louis,965
