@@ -1,0 +1,9 @@
+week02_dbt:
+  target: dev
+  outputs:
+    dev:
+      type: snowflake
+      role: ACCOUNTADMIN
+      warehouse: SNOWFLAKE_LEARNING_WH
+      database: DATA5035
+      schema: SPRING26
