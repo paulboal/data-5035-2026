@@ -1,0 +1,25 @@
+{
+  "run_name": "clinical_trial_01_ingest_patient_screenings",
+  "job_clusters": [
+    {
+      "job_cluster_key": "demo_cluster",
+      "new_cluster": {
+        "spark_version": "13.3.x-scala2.12",
+        "node_type_id": "Standard_DS3_v2",
+        "num_workers": 1
+      }
+    }
+  ],
+  "tasks": [
+    {
+      "task_key": "main",
+      "job_cluster_key": "demo_cluster",
+      "notebook_task": {
+        "notebook_path": "/Shared/data-5035/week07/clinical_trial_demo/01_ingest_patient_screenings",
+        "base_parameters": {
+          "run_date": "2026-02-21"
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,65 @@
+digraph clinical_trial_enrollment_airflow_dbx {
+  rankdir=LR;
+  graph [fontsize=12, labelloc=t, label="Clinical Trial Enrollment DAG"];
+  node [shape=box, style="rounded,filled", fillcolor="#f7f7f7", color="#555555", fontname="Helvetica"];
+  edge [color="#555555", arrowsize=0.8];
+
+  start [shape=oval, fillcolor="#e8f4ff", label="start"];
+  end [shape=oval, fillcolor="#e8f4ff", label="end"];
+
+  subgraph cluster_ingest {
+    label="TaskGroup: ingest";
+    color="#8fbcd4";
+    style="rounded";
+    i1 [label="ingest_patient_screenings"];
+    i2 [label="ingest_lab_results"];
+    i3 [label="load_site_reference"];
+  }
+
+  validate [label="validate_and_clean", fillcolor="#fff7e6"];
+  dq [shape=diamond, label="dq_gate\n(ShortCircuit)\npatient_rows >= min_rows\nand lab_rows >= min_rows", fillcolor="#ffecec"];
+
+  subgraph cluster_compute {
+    label="TaskGroup: compute";
+    color="#9fcf9f";
+    style="rounded";
+    e [label="eligibility_check"];
+    r [label="risk_scoring"];
+    c [label="consolidate_metrics", fillcolor="#eaffea"];
+  }
+
+  branch [shape=diamond, label="choose_publish_or_quarantine\n(BranchPythonOperator)", fillcolor="#fff3cd"];
+
+  subgraph cluster_publish {
+    label="TaskGroup: publish";
+    color="#d4b48f";
+    style="rounded";
+    p [label="publish_trial_summary"];
+    q [label="quarantine_run"];
+    pdone [label="publish_done\nTriggerRule:\nNONE_FAILED_MIN_ONE_SUCCESS", fillcolor="#fff7e6"];
+  }
+
+  start -> i1;
+  start -> i2;
+  start -> i3;
+
+  i1 -> validate;
+  i2 -> validate;
+  i3 -> validate;
+
+  validate -> dq;
+  dq -> e;
+  dq -> r;
+
+  e -> c;
+  r -> c;
+
+  c -> branch;
+  branch -> p [label="publish_enabled && impact_flag"];
+  branch -> q [label="otherwise"];
+
+  p -> pdone;
+  q -> pdone;
+
+  pdone -> end;
+}

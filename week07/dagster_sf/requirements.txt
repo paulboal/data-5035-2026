@@ -1,0 +1,5 @@
+dagster>=1.8.0
+dagster-webserver>=1.8.0
+dagster-snowflake>=0.24.0
+snowflake-connector-python>=3.10.0
+pandas>=2.0.0

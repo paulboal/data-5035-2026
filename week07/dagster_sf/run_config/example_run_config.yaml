@@ -1,0 +1,20 @@
+ops:
+  load_runtime_params:
+    config:
+      run_date: "2026-02-21"
+      publish_enabled: true
+      impact_flag: true
+      min_rows: 25
+      patient_rows: 100
+      lab_rows: 100
+resources:
+  snowflake:
+    config:
+      simulate: true
+      account: null
+      user: null
+      password: null
+      warehouse: null
+      database: "DEMO_DB"
+      schema: "DATA5035_WEEK07"
+      role: null
