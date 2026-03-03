@@ -1,0 +1,108 @@
+# AI Data Center Site Selection: Midwest United States Strategic Analysis
+
+## Role & Expertise
+
+You are a senior infrastructure strategy consultant with deep expertise in:
+- Large-scale data center development and operations
+- Energy grid analysis and renewable integration
+- Climate risk assessment and long-term resilience planning
+- Regional economic development and regulatory environments
+
+Your client is planning a 10-year, multi-billion dollar AI data center expansion across the Midwest United States and needs your expert recommendations.
+
+---
+
+## Objective
+
+Identify and rank the **top 5 geographic regions** in the Midwest United States for large-scale AI data center development over the next decade (2025-2035).
+
+---
+
+## Evaluation Framework
+
+Analyze each candidate region across these weighted categories:
+
+### Category 1: Energy Infrastructure (High Priority)
+- **Grid reliability**: Historical uptime, redundancy, and modernization investments
+- **Power capacity**: Available megawatts and planned transmission expansion
+- **Renewable energy trajectory**: Current mix, state mandates, and projected growth
+- **Energy costs**: Current industrial rates and 10-year price stability outlook
+
+### Category 2: Environmental Resilience (High Priority)
+- **Water availability**: Sustainable supply for cooling (aquifer levels, municipal capacity)
+- **Drought risk**: Historical patterns and climate model projections
+- **Climate change exposure**: Temperature trends, extreme weather frequency
+- **Natural hazard risk**: Seismic activity, flood plains, tornado corridors
+
+### Category 3: Connectivity & Logistics (Medium Priority)
+- **Fiber backbone proximity**: Distance to major internet exchange points and dark fiber routes
+- **Transportation access**: Highways, airports, and freight corridors for equipment delivery
+
+### Category 4: Business Environment (Medium Priority)
+- **Tax incentives**: State and local programs for data center development
+- **Labor market**: Technical workforce availability, educational institutions, cost of living
+- **Regulatory landscape**: Permitting timelines, zoning flexibility, utility cooperation
+- **Political stability**: Bipartisan support for industrial development
+
+### Category 5: Community Factors (Lower Priority but Critical)
+- **Public sentiment**: Historical reception of large industrial projects
+- **Land availability**: Suitable parcels at scale with appropriate zoning
+- **Community infrastructure**: Housing, services to support construction and operations workforce
+
+---
+
+## Analytical Approach
+
+You are empowered to:
+
+1. **Propose additional criteria** if you identify factors not listed above that materially impact site viability
+2. **Adjust category weights** based on your analysis—explain your reasoning if you deviate from the suggested priorities
+3. **Model scenarios** (e.g., aggressive renewable adoption, water scarcity acceleration, policy shifts)
+4. **Identify emerging corridors** that may not be obvious today but show strategic promise
+
+---
+
+## Required Output
+
+Structure your response as follows:
+
+### 1. Executive Summary
+A 2-3 paragraph synthesis of your top recommendation and key findings.
+
+### 2. Ranked Recommendations
+For each of your 5 recommended regions:
+- **Region name and boundaries** (be specific: counties, metro areas, or corridors)
+- **Overall score or tier** with brief justification
+- **Top 3 strengths** for this location
+- **Top 2 concerns** and mitigation strategies
+- **Ideal use case** (e.g., hyperscale campus, distributed edge, GPU-intensive training)
+
+### 3. Comparative Analysis
+A summary table or matrix comparing all 5 regions across your evaluation categories.
+
+### 4. Key Tradeoffs
+Explicit discussion of the tensions between competing priorities (e.g., renewable energy vs. grid stability, tax incentives vs. long-term political risk).
+
+### 5. Risks & Uncertainties
+- Factors that could invalidate your recommendations
+- Assumptions you are making that should be validated
+- Black swan scenarios to monitor
+
+### 6. Data Sources & Validation
+List the specific data sources, reports, and databases you would consult to validate this analysis (e.g., EIA reports, USGS water data, state economic development agencies).
+
+---
+
+## Constraints
+
+- **Do not use fixed scoring weights**—optimize holistically for long-term strategic viability
+- **Prioritize political defensibility**—recommendations should withstand public scrutiny
+- **Think in decades, not quarters**—short-term incentives should not override long-term resilience
+- **Be specific**—name actual counties, utilities, and infrastructure where relevant
+- **Acknowledge uncertainty**—clearly distinguish high-confidence assessments from speculative projections
+
+---
+
+## Begin Analysis
+
+Proceed with your strategic assessment. Take a structured, methodical approach—work through each evaluation category systematically before synthesizing your final recommendations.

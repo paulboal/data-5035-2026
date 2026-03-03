@@ -1,0 +1,17 @@
+definition_version: 2
+entities:
+  geospatial_viewer:
+    type: streamlit
+    identifier:
+      name: GEOSPATIAL_VIEWER
+      database: DATA5035
+      schema: SPRING26
+    query_warehouse: SNOWFLAKE_LEARNING_WH
+    main_file: streamlit_app.py
+    runtime_name: SYSTEM$ST_CONTAINER_RUNTIME_PY3_11
+    compute_pool: SYSTEM_COMPUTE_POOL_CPU
+    external_access_integrations:
+      - PYPI_ACCESS_INTEGRATION
+    artifacts:
+      - streamlit_app.py
+      - pyproject.toml

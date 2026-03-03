@@ -1,0 +1,31 @@
+Database: DATA5035
+Schema: SPRING26
+
+Create a Snowpark Python script that performs geospatial site selection for potential AI data center parcels.
+
+Create the following tables with sample data based on the St. Louis, MO region. Create realistic synthetic sample data.
+- PARCELS (parcel_id, geom GEOGRAPHY, land_cost)
+- POWER_PLANTS (plant_id, geom GEOGRAPHY, capacity_mw)
+- FLOODPLAINS (geom GEOGRAPHY)
+- WETLANDS (geom GEOGRAPHY)
+- FIBER_LINES (geom GEOGRAPHY)
+- PUBLIC_SENTIMENT (county_id, sentiment_score)
+
+Requirements:
+1. Filter parcels within 10 miles of power plants with capacity >= 500 MW.
+2. Exclude parcels intersecting 100-year floodplains.
+3. Exclude parcels within 5 miles of wetlands.
+4. Keep parcels within 2 miles of fiber backbone lines.
+5. Compute distance to nearest power plant.
+6. Join sentiment data.
+7. Create a weighted score:
+   40% power proximity
+   25% land cost (inverse)
+   20% sentiment
+   15% fiber proximity
+8. Rank parcels and return top 10.
+
+Write this in a clear imperative Snowpark style, explicitly creating intermediate DataFrames for each transformation step.
+Include comments explaining each geospatial operation.
+
+Deploy everything to my Snowflake account.

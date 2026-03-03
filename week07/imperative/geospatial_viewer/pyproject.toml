@@ -1,0 +1,9 @@
+[project]
+name = "geospatial-viewer"
+version = "0.1.0"
+requires-python = ">=3.11"
+dependencies = [
+    "streamlit>=1.48.0",
+    "snowflake-snowpark-python",
+    "pydeck>=0.8.0",
+]

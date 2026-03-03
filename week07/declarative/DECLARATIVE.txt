@@ -1,0 +1,27 @@
+Database: DATA5035
+Schema: SPRING26
+
+Generate a single SQL-based solution in Snowflake using geospatial functions to identify the top 10 candidate parcels for a new AI-scale data center.
+
+Tables:
+- PARCELS(parcel_id, geom GEOGRAPHY, land_cost)
+- POWER_PLANTS(plant_id, geom GEOGRAPHY, capacity_mw)
+- FLOODPLAINS(geom GEOGRAPHY)
+- WETLANDS(geom GEOGRAPHY)
+- FIBER_LINES(geom GEOGRAPHY)
+- PUBLIC_SENTIMENT(county_id, sentiment_score)
+
+Requirements:
+- Within 10 miles of power plants >= 500 MW (use ST_DWITHIN).
+- Not intersecting floodplains (ST_INTERSECTS).
+- At least 5 miles away from wetlands.
+- Within 2 miles of fiber backbone.
+- Compute a composite score using:
+   40% power proximity
+   25% inverse land cost
+   20% sentiment
+   15% fiber proximity
+- Return top 10 parcels ordered by score.
+
+Use geospatial SQL functions only and avoid procedural constructs.
+Let the optimizer determine execution strategy.

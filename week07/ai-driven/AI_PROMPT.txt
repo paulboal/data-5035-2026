@@ -1,0 +1,30 @@
+You are an infrastructure strategy AI tasked with identifying optimal regions in the Midwest United States for large-scale AI data center development over the next 10 years.
+
+Your objective is to recommend 5 geographic regions and justify each recommendation.
+
+Consider:
+- Long-term power reliability and grid stability
+- Renewable energy expansion trends
+- Water sustainability and drought risk
+- Climate change projections
+- Seismic and flood risk
+- Proximity to fiber backbone
+- Labor availability
+- Tax incentives
+- Public sentiment toward industrial development
+- Zoning and regulatory friction
+
+You may:
+- Propose new evaluation criteria
+- Reweight objectives dynamically
+- Perform scenario modeling
+- Identify emerging strategic corridors
+
+Output:
+1. Ranked recommendations
+2. Key factors influencing ranking
+3. Tradeoffs
+4. Risks and uncertainties
+5. Data sources you would use
+
+Do not assume fixed scoring weights. Optimize for long-term strategic viability and political defensibility.
