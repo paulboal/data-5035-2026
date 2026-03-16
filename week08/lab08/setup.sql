@@ -1,0 +1,45 @@
+-- =============================================================================
+-- SETUP SCRIPT: Database and Schema Creation
+-- Purpose: Creates the DATA5035 database and all schemas for the pharma
+--          manufacturing serving-layer demo.
+-- =============================================================================
+
+CREATE DATABASE IF NOT EXISTS DATA5035;
+
+-- Normalized transactional model
+CREATE SCHEMA IF NOT EXISTS DATA5035.PHARMA_3NF;
+
+-- Dimensional star schema for BI analytics
+CREATE SCHEMA IF NOT EXISTS DATA5035.PHARMA_STAR;
+
+-- Flattened wide table for ML / file-based serving
+CREATE SCHEMA IF NOT EXISTS DATA5035.PHARMA_ML;
+
+-- Transactional reverse ETL / alerting
+CREATE SCHEMA IF NOT EXISTS DATA5035.PHARMA_INT;
+
+-- Vector-enabled GenAI / embeddings
+CREATE SCHEMA IF NOT EXISTS DATA5035.PHARMA_AI;
+
+-- =============================================================================
+-- GRANTS: Allow PUBLIC to read all current and future objects in each schema
+-- =============================================================================
+
+-- Schema-level USAGE grants
+GRANT USAGE ON SCHEMA DATA5035.PHARMA_3NF  TO ROLE PUBLIC;
+GRANT USAGE ON SCHEMA DATA5035.PHARMA_STAR TO ROLE PUBLIC;
+GRANT USAGE ON SCHEMA DATA5035.PHARMA_ML   TO ROLE PUBLIC;
+GRANT USAGE ON SCHEMA DATA5035.PHARMA_INT  TO ROLE PUBLIC;
+GRANT USAGE ON SCHEMA DATA5035.PHARMA_AI   TO ROLE PUBLIC;
+
+-- Future grants so new tables and views are automatically readable
+GRANT SELECT ON FUTURE TABLES IN SCHEMA DATA5035.PHARMA_3NF  TO ROLE PUBLIC;
+GRANT SELECT ON FUTURE VIEWS  IN SCHEMA DATA5035.PHARMA_3NF  TO ROLE PUBLIC;
+GRANT SELECT ON FUTURE TABLES IN SCHEMA DATA5035.PHARMA_STAR TO ROLE PUBLIC;
+GRANT SELECT ON FUTURE VIEWS  IN SCHEMA DATA5035.PHARMA_STAR TO ROLE PUBLIC;
+GRANT SELECT ON FUTURE TABLES IN SCHEMA DATA5035.PHARMA_ML   TO ROLE PUBLIC;
+GRANT SELECT ON FUTURE VIEWS  IN SCHEMA DATA5035.PHARMA_ML   TO ROLE PUBLIC;
+GRANT SELECT ON FUTURE TABLES IN SCHEMA DATA5035.PHARMA_INT  TO ROLE PUBLIC;
+GRANT SELECT ON FUTURE VIEWS  IN SCHEMA DATA5035.PHARMA_INT  TO ROLE PUBLIC;
+GRANT SELECT ON FUTURE TABLES IN SCHEMA DATA5035.PHARMA_AI   TO ROLE PUBLIC;
+GRANT SELECT ON FUTURE VIEWS  IN SCHEMA DATA5035.PHARMA_AI   TO ROLE PUBLIC;
