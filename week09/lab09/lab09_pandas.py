@@ -73,3 +73,20 @@ current = (
       "DIAGNOSIS_CODE", "DESCRIPTION"]]
 )
 print(current.to_string(index=False))
+
+# Pandas ASOD Join
+# https://pandas.pydata.org/docs/reference/api/pandas.merge_asof.html
+# This is similar to a left-join except that we match on nearest key rather than equal keys. 
+# Both DataFrames must be first sorted by the merge key in ascending order before calling this function.
+print("=== PANDAS ASOF JOIN ===")
+encounter_sorted = encounter.sort_values("ENCOUNTER_DATE")
+patient_sorted = patient.sort_values("EFFECTIVE_START_DATE")
+
+result = pd.merge_asof(
+    encounter_sorted,
+    patient_sorted,
+    left_on="ENCOUNTER_DATE",
+    right_on="EFFECTIVE_START_DATE",
+    by="PATIENT_ID",
+    direction="backward"
+)
