@@ -1,0 +1,12 @@
+PATIENT_SK,PATIENT_ID,FIRST_NAME,LAST_NAME,DATE_OF_BIRTH,GENDER,ADDRESS,CITY,STATE,ZIP_CODE,EFFECTIVE_START_DATE,EFFECTIVE_END_DATE,IS_CURRENT
+1,1,Maria,Santos,1985-03-14,Female,410 Elm St,St. Louis,MO,63101,2020-01-01,2025-08-31,False
+2,1,Maria,Santos-Rivera,1985-03-14,Female,410 Elm St,St. Louis,MO,63101,2025-09-01,9999-12-31,True
+3,2,James,Thornton,1972-11-28,Male,88 Pine Ave,Clayton,MO,63105,2019-06-15,2025-10-31,False
+4,2,James,Thornton,1972-11-28,Male,220 Market St,Chesterfield,MO,63017,2025-11-01,9999-12-31,True
+5,3,Aisha,Patel,1998-07-02,Female,1500 Wash Ave,St. Louis,MO,63103,2022-03-10,9999-12-31,True
+6,4,Robert,Chen,1960-01-19,Male,75 Oak Ln,Kirkwood,MO,63122,2018-01-01,2024-12-31,False
+7,4,Robert,Chen,1960-01-19,Male,302 Maple Dr,Webster Groves,MO,63119,2025-01-01,2025-09-30,False
+8,4,Robert,Chen,1960-01-19,Male,19 Brentwood Blvd,Brentwood,MO,63144,2025-10-01,9999-12-31,True
+9,5,Elena,Vasquez,1991-09-10,Female,607 Grand Blvd,St. Louis,MO,63104,2021-07-20,9999-12-31,True
+10,6,David,Kim,1988-05-22,Male,45 Delmar Blvd,University City,MO,63130,2023-04-01,9999-12-31,True
+11,7,Sophie,Brennan,2001-12-03,Female,812 Lindell Blvd,St. Louis,MO,63108,2024-02-15,9999-12-31,True

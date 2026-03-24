@@ -1,0 +1,51 @@
+DIAGNOSIS_ID,DIAGNOSIS_CODE,DESCRIPTION
+1,J06.9,"Acute upper respiratory infection, unspecified"
+2,I10,Essential (primary) hypertension
+3,E11.9,Type 2 diabetes mellitus without complications
+4,J18.9,"Pneumonia, unspecified organism"
+5,M54.5,Low back pain
+6,K21.0,Gastro-esophageal reflux disease with esophagitis
+7,F32.9,"Major depressive disorder, single episode, unspecified"
+8,J45.909,"Unspecified asthma, uncomplicated"
+9,E78.5,"Hyperlipidemia, unspecified"
+10,N39.0,"Urinary tract infection, site not specified"
+11,R51.9,"Headache, unspecified"
+12,G43.909,"Migraine, unspecified, not intractable"
+13,J02.9,"Acute pharyngitis, unspecified"
+14,H66.90,"Otitis media, unspecified, unspecified ear"
+15,L30.9,"Dermatitis, unspecified"
+16,R10.9,Unspecified abdominal pain
+17,M79.3,"Panniculitis, unspecified"
+18,R05.9,"Cough, unspecified"
+19,B34.9,"Viral infection, unspecified"
+20,E03.9,"Hypothyroidism, unspecified"
+21,I25.10,Atherosclerotic heart disease of native coronary artery
+22,J44.1,Chronic obstructive pulmonary disease with acute exacerbation
+23,K58.9,Irritable bowel syndrome without diarrhea
+24,F41.1,Generalized anxiety disorder
+25,M17.11,"Primary osteoarthritis, right knee"
+26,G47.00,"Insomnia, unspecified"
+27,R11.2,"Nausea with vomiting, unspecified"
+28,J20.9,"Acute bronchitis, unspecified"
+29,E55.9,"Vitamin D deficiency, unspecified"
+30,D64.9,"Anemia, unspecified"
+31,R42,Dizziness and giddiness
+32,S93.401A,"Sprain of unspecified ligament of right ankle, initial encounter"
+33,L70.0,Acne vulgaris
+34,H10.10,"Acute atopic conjunctivitis, unspecified eye"
+35,J01.90,"Acute sinusitis, unspecified"
+36,R50.9,"Fever, unspecified"
+37,E66.01,Morbid (severe) obesity due to excess calories
+38,N40.0,Benign prostatic hyperplasia without lower urinary tract symptoms
+39,K76.0,"Fatty (change of) liver, not elsewhere classified"
+40,B00.1,Herpesviral vesicular dermatitis
+41,M25.511,Pain in right shoulder
+42,R00.0,"Tachycardia, unspecified"
+43,J30.1,Allergic rhinitis due to pollen
+44,G89.29,Other chronic pain
+45,R73.03,Prediabetes
+46,S62.509A,"Unspecified fracture of unspecified metacarpal bone, initial encounter"
+47,T78.40,"Allergy, unspecified"
+48,Z23,Encounter for immunization
+49,Z00.00,Encounter for general adult medical examination without abnormal findings
+50,Z12.31,Encounter for screening mammogram for malignant neoplasm of breast
