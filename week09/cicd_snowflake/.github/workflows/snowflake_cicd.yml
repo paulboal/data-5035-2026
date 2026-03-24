@@ -1,0 +1,155 @@
+name: Snowflake CI/CD Pipeline
+
+on:
+  push:
+    branches: [dev, test, main]
+    paths:
+      - 'week09/cicd_snowflake/**'
+
+# Prevent concurrent deployments to the same environment
+concurrency:
+  group: snowflake-${{ github.ref_name }}
+  cancel-in-progress: false
+
+env:
+  SNOWFLAKE_ACCOUNT: ${{ secrets.SNOWFLAKE_ACCOUNT }}
+  SNOWFLAKE_USER: ${{ secrets.SNOWFLAKE_USER }}
+  SNOWFLAKE_PASSWORD: ${{ secrets.SNOWFLAKE_PASSWORD }}
+  SNOWFLAKE_WAREHOUSE: ${{ secrets.SNOWFLAKE_WAREHOUSE }}
+  SNOWFLAKE_DATABASE: DATA5035
+  SNOWFLAKE_ROLE: ${{ secrets.SNOWFLAKE_ROLE }}
+
+jobs:
+
+  # ──────────────────────────────────────────────
+  # DEV: Deploy + full test suite
+  # ──────────────────────────────────────────────
+  deploy-dev:
+    if: github.ref_name == 'dev'
+    runs-on: ubuntu-latest
+    environment: dev
+    env:
+      SNOWFLAKE_SCHEMA: DEV
+    steps:
+
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install SnowSQL
+        uses: Snowflake-Labs/snowflake-cli-action@v1
+
+      - name: Set schema context
+        run: |
+          snow sql -q "USE ROLE $SNOWFLAKE_ROLE;" \
+                   -q "USE WAREHOUSE $SNOWFLAKE_WAREHOUSE;" \
+                   -q "USE SCHEMA $SNOWFLAKE_DATABASE.$SNOWFLAKE_SCHEMA;"
+
+      - name: Run migrations
+        run: |
+          for file in week09/cicd_snowflake/migrations/*.sql; do
+            echo "Running migration: $file"
+            snow sql -f "$file"
+          done
+
+      - name: Run tests
+        run: |
+          echo "Running test suite..."
+          snow sql -f week09/cicd_snowflake/tests/test_fact_monthly_summary.sql \
+            -o output_format=json | tee test_results.json
+
+          # Check if any test returned rows (rows = failures)
+          if grep -q "FAIL:" test_results.json; then
+            echo "::error::Tests failed. See output above."
+            exit 1
+          fi
+          echo "All tests passed."
+
+  # ──────────────────────────────────────────────
+  # TEST: Deploy + full test suite
+  # ──────────────────────────────────────────────
+  deploy-test:
+    if: github.ref_name == 'test'
+    runs-on: ubuntu-latest
+    environment: test
+    env:
+      SNOWFLAKE_SCHEMA: TEST
+    steps:
+
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install SnowSQL
+        uses: Snowflake-Labs/snowflake-cli-action@v1
+
+      - name: Set schema context
+        run: |
+          snow sql -q "USE ROLE $SNOWFLAKE_ROLE;" \
+                   -q "USE WAREHOUSE $SNOWFLAKE_WAREHOUSE;" \
+                   -q "USE SCHEMA $SNOWFLAKE_DATABASE.$SNOWFLAKE_SCHEMA;"
+
+      - name: Run migrations
+        run: |
+          for file in week09/cicd_snowflake/migrations/*.sql; do
+            echo "Running migration: $file"
+            snow sql -f "$file"
+          done
+
+      - name: Run tests
+        run: |
+          echo "Running test suite..."
+          snow sql -f week09/cicd_snowflake/tests/test_fact_monthly_summary.sql \
+            -o output_format=json | tee test_results.json
+
+          if grep -q "FAIL:" test_results.json; then
+            echo "::error::Tests failed. See output above."
+            exit 1
+          fi
+          echo "All tests passed."
+
+  # ──────────────────────────────────────────────
+  # PROD: Deploy + basic validation (manual approval required)
+  # ──────────────────────────────────────────────
+  deploy-prod:
+    if: github.ref_name == 'main'
+    runs-on: ubuntu-latest
+    environment: prod  # GitHub environment with required reviewers
+    env:
+      SNOWFLAKE_SCHEMA: SPRING26
+    steps:
+
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install SnowSQL
+        uses: Snowflake-Labs/snowflake-cli-action@v1
+
+      - name: Set schema context
+        run: |
+          snow sql -q "USE ROLE $SNOWFLAKE_ROLE;" \
+                   -q "USE WAREHOUSE $SNOWFLAKE_WAREHOUSE;" \
+                   -q "USE SCHEMA $SNOWFLAKE_DATABASE.$SNOWFLAKE_SCHEMA;"
+
+      - name: Run migrations
+        run: |
+          for file in week09/cicd_snowflake/migrations/*.sql; do
+            echo "Running migration: $file"
+            snow sql -f "$file"
+          done
+
+      - name: Basic validation
+        run: |
+          echo "Validating deployment..."
+
+          # Confirm view exists
+          snow sql -q "SHOW VIEWS LIKE 'FACT_MONTHLY_SUMMARY' IN SCHEMA $SNOWFLAKE_DATABASE.$SNOWFLAKE_SCHEMA;"
+
+          # Confirm view returns data
+          RESULT=$(snow sql -q "SELECT COUNT(*) AS row_count FROM fact_monthly_summary;" \
+            -o output_format=json)
+          echo "$RESULT"
+
+          if echo "$RESULT" | grep -q '"ROW_COUNT": 0'; then
+            echo "::error::Validation failed: view returned 0 rows."
+            exit 1
+          fi
+          echo "Validation passed."

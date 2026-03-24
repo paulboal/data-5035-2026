@@ -1,0 +1,321 @@
+name: Databricks CI/CD Pipeline
+
+on:
+  push:
+    branches: [dev, test, main]
+    paths:
+      - 'week09/cicd_databricks/**'
+
+# Prevent concurrent deployments to the same environment
+concurrency:
+  group: databricks-${{ github.ref_name }}
+  cancel-in-progress: false
+
+env:
+  DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST }}
+  DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN }}
+  CLUSTER_ID: ${{ secrets.DATABRICKS_CLUSTER_ID }}
+
+jobs:
+
+  # ──────────────────────────────────────────────
+  # DEV: Deploy + full test suite
+  # ──────────────────────────────────────────────
+  deploy-dev:
+    if: github.ref_name == 'dev'
+    runs-on: ubuntu-latest
+    environment: dev
+    env:
+      TARGET_SCHEMA: dev
+      WORKSPACE_PATH: /Repos/cicd/dev
+    steps:
+
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Databricks CLI
+        uses: databricks/setup-cli@main
+
+      - name: Deploy notebooks
+        run: |
+          databricks workspace import \
+            "$WORKSPACE_PATH/monthly_summary" \
+            --file week09/cicd_databricks/notebooks/monthly_summary.py \
+            --language PYTHON \
+            --format SOURCE \
+            --overwrite
+
+          databricks workspace import \
+            "$WORKSPACE_PATH/test_monthly_summary" \
+            --file week09/cicd_databricks/tests/test_monthly_summary.py \
+            --language PYTHON \
+            --format SOURCE \
+            --overwrite
+
+      - name: Run deployment notebook
+        run: |
+          RUN_OUTPUT=$(databricks jobs submit --json '{
+            "run_name": "deploy-fact-monthly-summary-dev",
+            "existing_cluster_id": "'"$CLUSTER_ID"'",
+            "notebook_task": {
+              "notebook_path": "'"$WORKSPACE_PATH"'/monthly_summary",
+              "base_parameters": {
+                "schema": "'"$TARGET_SCHEMA"'"
+              }
+            }
+          }')
+
+          RUN_ID=$(echo "$RUN_OUTPUT" | jq -r '.run_id')
+          echo "Submitted run: $RUN_ID"
+
+          # Poll until complete
+          while true; do
+            STATE=$(databricks runs get --run-id "$RUN_ID" | jq -r '.state.life_cycle_state')
+            echo "Run state: $STATE"
+            if [ "$STATE" = "TERMINATED" ]; then break; fi
+            if [ "$STATE" = "INTERNAL_ERROR" ] || [ "$STATE" = "SKIPPED" ]; then
+              echo "::error::Deployment run failed with state: $STATE"
+              exit 1
+            fi
+            sleep 10
+          done
+
+          RESULT=$(databricks runs get --run-id "$RUN_ID" | jq -r '.state.result_state')
+          if [ "$RESULT" != "SUCCESS" ]; then
+            echo "::error::Deployment notebook failed with result: $RESULT"
+            exit 1
+          fi
+          echo "Deployment notebook completed successfully."
+
+      - name: Run test notebook
+        run: |
+          RUN_OUTPUT=$(databricks jobs submit --json '{
+            "run_name": "test-fact-monthly-summary-dev",
+            "existing_cluster_id": "'"$CLUSTER_ID"'",
+            "notebook_task": {
+              "notebook_path": "'"$WORKSPACE_PATH"'/test_monthly_summary",
+              "base_parameters": {
+                "schema": "'"$TARGET_SCHEMA"'"
+              }
+            }
+          }')
+
+          RUN_ID=$(echo "$RUN_OUTPUT" | jq -r '.run_id')
+          echo "Submitted test run: $RUN_ID"
+
+          while true; do
+            STATE=$(databricks runs get --run-id "$RUN_ID" | jq -r '.state.life_cycle_state')
+            echo "Test run state: $STATE"
+            if [ "$STATE" = "TERMINATED" ]; then break; fi
+            if [ "$STATE" = "INTERNAL_ERROR" ] || [ "$STATE" = "SKIPPED" ]; then
+              echo "::error::Test run failed with state: $STATE"
+              exit 1
+            fi
+            sleep 10
+          done
+
+          RESULT=$(databricks runs get --run-id "$RUN_ID" | jq -r '.state.result_state')
+          if [ "$RESULT" != "SUCCESS" ]; then
+            echo "::error::Test notebook failed with result: $RESULT"
+            databricks runs get-output --run-id "$RUN_ID" | jq '.error'
+            exit 1
+          fi
+          echo "All tests passed."
+
+  # ──────────────────────────────────────────────
+  # TEST: Deploy + full test suite
+  # ──────────────────────────────────────────────
+  deploy-test:
+    if: github.ref_name == 'test'
+    runs-on: ubuntu-latest
+    environment: test
+    env:
+      TARGET_SCHEMA: test
+      WORKSPACE_PATH: /Repos/cicd/test
+    steps:
+
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Databricks CLI
+        uses: databricks/setup-cli@main
+
+      - name: Deploy notebooks
+        run: |
+          databricks workspace import \
+            "$WORKSPACE_PATH/monthly_summary" \
+            --file week09/cicd_databricks/notebooks/monthly_summary.py \
+            --language PYTHON \
+            --format SOURCE \
+            --overwrite
+
+          databricks workspace import \
+            "$WORKSPACE_PATH/test_monthly_summary" \
+            --file week09/cicd_databricks/tests/test_monthly_summary.py \
+            --language PYTHON \
+            --format SOURCE \
+            --overwrite
+
+      - name: Run deployment notebook
+        run: |
+          RUN_OUTPUT=$(databricks jobs submit --json '{
+            "run_name": "deploy-fact-monthly-summary-test",
+            "existing_cluster_id": "'"$CLUSTER_ID"'",
+            "notebook_task": {
+              "notebook_path": "'"$WORKSPACE_PATH"'/monthly_summary",
+              "base_parameters": {
+                "schema": "'"$TARGET_SCHEMA"'"
+              }
+            }
+          }')
+
+          RUN_ID=$(echo "$RUN_OUTPUT" | jq -r '.run_id')
+          echo "Submitted run: $RUN_ID"
+
+          while true; do
+            STATE=$(databricks runs get --run-id "$RUN_ID" | jq -r '.state.life_cycle_state')
+            echo "Run state: $STATE"
+            if [ "$STATE" = "TERMINATED" ]; then break; fi
+            if [ "$STATE" = "INTERNAL_ERROR" ] || [ "$STATE" = "SKIPPED" ]; then
+              echo "::error::Deployment run failed with state: $STATE"
+              exit 1
+            fi
+            sleep 10
+          done
+
+          RESULT=$(databricks runs get --run-id "$RUN_ID" | jq -r '.state.result_state')
+          if [ "$RESULT" != "SUCCESS" ]; then
+            echo "::error::Deployment notebook failed with result: $RESULT"
+            exit 1
+          fi
+          echo "Deployment notebook completed successfully."
+
+      - name: Run test notebook
+        run: |
+          RUN_OUTPUT=$(databricks jobs submit --json '{
+            "run_name": "test-fact-monthly-summary-test",
+            "existing_cluster_id": "'"$CLUSTER_ID"'",
+            "notebook_task": {
+              "notebook_path": "'"$WORKSPACE_PATH"'/test_monthly_summary",
+              "base_parameters": {
+                "schema": "'"$TARGET_SCHEMA"'"
+              }
+            }
+          }')
+
+          RUN_ID=$(echo "$RUN_OUTPUT" | jq -r '.run_id')
+          echo "Submitted test run: $RUN_ID"
+
+          while true; do
+            STATE=$(databricks runs get --run-id "$RUN_ID" | jq -r '.state.life_cycle_state')
+            echo "Test run state: $STATE"
+            if [ "$STATE" = "TERMINATED" ]; then break; fi
+            if [ "$STATE" = "INTERNAL_ERROR" ] || [ "$STATE" = "SKIPPED" ]; then
+              echo "::error::Test run failed with state: $STATE"
+              exit 1
+            fi
+            sleep 10
+          done
+
+          RESULT=$(databricks runs get --run-id "$RUN_ID" | jq -r '.state.result_state')
+          if [ "$RESULT" != "SUCCESS" ]; then
+            echo "::error::Test notebook failed with result: $RESULT"
+            databricks runs get-output --run-id "$RUN_ID" | jq '.error'
+            exit 1
+          fi
+          echo "All tests passed."
+
+  # ──────────────────────────────────────────────
+  # PROD: Deploy + basic validation (manual approval required)
+  # ──────────────────────────────────────────────
+  deploy-prod:
+    if: github.ref_name == 'main'
+    runs-on: ubuntu-latest
+    environment: prod  # GitHub environment with required reviewers
+    env:
+      TARGET_SCHEMA: spring26
+      WORKSPACE_PATH: /Repos/cicd/prod
+    steps:
+
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Databricks CLI
+        uses: databricks/setup-cli@main
+
+      - name: Deploy notebooks
+        run: |
+          databricks workspace import \
+            "$WORKSPACE_PATH/monthly_summary" \
+            --file week09/cicd_databricks/notebooks/monthly_summary.py \
+            --language PYTHON \
+            --format SOURCE \
+            --overwrite
+
+      - name: Run deployment notebook
+        run: |
+          RUN_OUTPUT=$(databricks jobs submit --json '{
+            "run_name": "deploy-fact-monthly-summary-prod",
+            "existing_cluster_id": "'"$CLUSTER_ID"'",
+            "notebook_task": {
+              "notebook_path": "'"$WORKSPACE_PATH"'/monthly_summary",
+              "base_parameters": {
+                "schema": "'"$TARGET_SCHEMA"'"
+              }
+            }
+          }')
+
+          RUN_ID=$(echo "$RUN_OUTPUT" | jq -r '.run_id')
+          echo "Submitted run: $RUN_ID"
+
+          while true; do
+            STATE=$(databricks runs get --run-id "$RUN_ID" | jq -r '.state.life_cycle_state')
+            echo "Run state: $STATE"
+            if [ "$STATE" = "TERMINATED" ]; then break; fi
+            if [ "$STATE" = "INTERNAL_ERROR" ] || [ "$STATE" = "SKIPPED" ]; then
+              echo "::error::Deployment run failed with state: $STATE"
+              exit 1
+            fi
+            sleep 10
+          done
+
+          RESULT=$(databricks runs get --run-id "$RUN_ID" | jq -r '.state.result_state')
+          if [ "$RESULT" != "SUCCESS" ]; then
+            echo "::error::Deployment notebook failed with result: $RESULT"
+            exit 1
+          fi
+          echo "Deployment notebook completed successfully."
+
+      - name: Basic validation
+        run: |
+          echo "Running basic validation..."
+
+          RUN_OUTPUT=$(databricks jobs submit --json '{
+            "run_name": "validate-fact-monthly-summary-prod",
+            "existing_cluster_id": "'"$CLUSTER_ID"'",
+            "notebook_task": {
+              "notebook_path": "'"$WORKSPACE_PATH"'/monthly_summary",
+              "base_parameters": {
+                "schema": "'"$TARGET_SCHEMA"'"
+              }
+            }
+          }')
+
+          RUN_ID=$(echo "$RUN_OUTPUT" | jq -r '.run_id')
+
+          while true; do
+            STATE=$(databricks runs get --run-id "$RUN_ID" | jq -r '.state.life_cycle_state')
+            if [ "$STATE" = "TERMINATED" ]; then break; fi
+            if [ "$STATE" = "INTERNAL_ERROR" ] || [ "$STATE" = "SKIPPED" ]; then
+              echo "::error::Validation failed with state: $STATE"
+              exit 1
+            fi
+            sleep 10
+          done
+
+          RESULT=$(databricks runs get --run-id "$RUN_ID" | jq -r '.state.result_state')
+          if [ "$RESULT" != "SUCCESS" ]; then
+            echo "::error::Validation notebook failed."
+            exit 1
+          fi
+          echo "Validation passed."
